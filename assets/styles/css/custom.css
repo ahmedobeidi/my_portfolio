@@ -1,0 +1,28 @@
+/* Hide scrollbar */
+html {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+html::-webkit-scrollbar { 
+    display: none; /* WebKit */
+}
+
+/* Enable smooth scrolling and snap to sections */
+html {
+    scroll-behavior: smooth;
+    scroll-snap-type: y mandatory;
+}
+
+/* Make each section snap to viewport */
+section {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+}
+
+/* Ensure body takes full height */
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
