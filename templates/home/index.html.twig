@@ -621,44 +621,61 @@ updatePortfolioSlider();
 }
 
 function initializePortfolioSlider() {
-if (! slider) 
-return;
+if (!slider) return;
 
+    // Event listeners for navigation buttons
+    if (nextBtn && prevBtn) {
+        nextBtn.addEventListener('click', nextSlide);
+        prevBtn.addEventListener('click', prevSlide);
+    }
 
+    // Dot navigation
+    portfolioDots.forEach((dot, index) => {
+        dot.addEventListener('click', () => goToSlide(index));
+    });
 
-// Event listeners for navigation buttons
-if (nextBtn && prevBtn) {
-nextBtn.addEventListener('click', nextSlide);
-prevBtn.addEventListener('click', prevSlide);
-}
+    // Auto-play functionality
+    function startAutoPlay() {
+        autoPlay = setInterval(nextSlide, 5000);
+    }
 
-// Dot navigation
-portfolioDots.forEach((dot, index) => {
-dot.addEventListener('click', () => goToSlide(index));
-});
+    function stopAutoPlay() {
+        if (autoPlay) {
+            clearInterval(autoPlay);
+            autoPlay = null;
+        }
+    }
 
-// Auto-play functionality
-function startAutoPlay() {
-autoPlay = setInterval(nextSlide, 5000);
-}
+// Pause auto-play on portfolio section hover
+    const portfolioSection = document.getElementById('portfolio');
+    if (portfolioSection) {
+        portfolioSection.addEventListener('mouseenter', stopAutoPlay);
+        portfolioSection.addEventListener('mouseleave', startAutoPlay);
+    }
 
-function stopAutoPlay() {
-if (autoPlay) {
-clearInterval(autoPlay);
-autoPlay = null;
-}
-}
+    // Pause auto-play when hovering over individual project images
+    const projectImages = document.querySelectorAll('#portfolio .group');
+    projectImages.forEach(projectGroup => {
+        projectGroup.addEventListener('mouseenter', () => {
+            stopAutoPlay();
+            console.log('Project hover - auto-play paused');
+        });
+        
+        projectGroup.addEventListener('mouseleave', () => {
+            // Only restart auto-play if we're still in the portfolio section
+            const portfolioRect = portfolioSection.getBoundingClientRect();
+            const isInPortfolioSection = portfolioRect.top <= window.innerHeight && portfolioRect.bottom >= 0;
+            
+            if (isInPortfolioSection) {
+                startAutoPlay();
+                console.log('Project hover ended - auto-play resumed');
+            }
+        });
+    });
 
-// Pause auto-play on hover
-const portfolioSection = document.getElementById('portfolio');
-if (portfolioSection) {
-portfolioSection.addEventListener('mouseenter', stopAutoPlay);
-portfolioSection.addEventListener('mouseleave', startAutoPlay);
-}
-
-// Initialize slider
-updatePortfolioSlider();
-startAutoPlay();
+    // Initialize slider
+    updatePortfolioSlider();
+    startAutoPlay();
 }
 
 // ========================================
