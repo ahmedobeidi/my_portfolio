@@ -341,7 +341,7 @@ function initializePortfolioSlider() {
     // Auto-play functionality
     function startAutoPlay() {
         if (autoPlay) return; // Prevent multiple intervals
-        autoPlay = setInterval(nextSlide, 4000); // Increased from 5000ms to 4000ms
+        autoPlay = setInterval(nextSlide, 4000);
     }
 
     function stopAutoPlay() {
@@ -354,17 +354,27 @@ function initializePortfolioSlider() {
     // Get portfolio section and project elements
     const portfolioSection = document.getElementById("portfolio");
     const projectImages = document.querySelectorAll("#portfolio .group");
+    const sliderContainer = slider.parentElement; // Get the slider container
 
-    // Pause auto-play on portfolio section hover
+    // Pause auto-play on slider container hover (more reliable)
+    if (sliderContainer) {
+        sliderContainer.addEventListener("mouseenter", () => {
+            stopAutoPlay();
+        });
+        
+        sliderContainer.addEventListener("mouseleave", () => {
+            startAutoPlay();
+        });
+    }
+
+    // Also pause on portfolio section hover as backup
     if (portfolioSection) {
         portfolioSection.addEventListener("mouseenter", () => {
             stopAutoPlay();
-            console.log("Portfolio section hover - auto-play paused");
         });
         
         portfolioSection.addEventListener("mouseleave", () => {
             startAutoPlay();
-            console.log("Portfolio section hover ended - auto-play resumed");
         });
     }
 
@@ -372,20 +382,12 @@ function initializePortfolioSlider() {
     projectImages.forEach((projectGroup) => {
         projectGroup.addEventListener("mouseenter", () => {
             stopAutoPlay();
-            console.log("Project hover - auto-play paused");
         });
         
         projectGroup.addEventListener("mouseleave", () => {
             // Add a small delay before restarting to prevent rapid start/stop
             setTimeout(() => {
-                // Only restart if mouse is still in portfolio section
-                const portfolioRect = portfolioSection.getBoundingClientRect();
-                const mouseInPortfolio = portfolioRect.top <= window.innerHeight && portfolioRect.bottom >= 0;
-                
-                if (mouseInPortfolio) {
-                    startAutoPlay();
-                    console.log("Project hover ended - auto-play resumed");
-                }
+                startAutoPlay();
             }, 200);
         });
     });
@@ -462,9 +464,6 @@ function initializeApp() {
     initializeSectionNavigation();
     initializePortfolioSlider();
     initialize();
-
-    console.log("App initialized. Sections found:", sections.length);
-    console.log("Navigation links found:", navLinks.length);
 }
 
 // Run initialization when DOM is ready
