@@ -444,7 +444,7 @@ function initialize() {
         sections[currentSectionIndex].scrollIntoView({
             behavior: "auto",
             block: "start",
-        });
+        });é
     }
 }
 
